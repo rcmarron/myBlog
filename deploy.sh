@@ -100,12 +100,12 @@ selectNodeVersion () {
 
 echo Handling deployment.
 
-# 1. KuduSync
-echo Kudu Sync from "$DEPLOYMENT_SOURCE" to "$DEPLOYMENT_TARGET"
-$KUDU_SYNC_COMMAND -q -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.deployment;deploy.sh" 2> /dev/null
+# 3. KuduSync
+echo Kudu Sync from "$DEPLOYMENT_SOURCE/out" to "$DEPLOYMENT_TARGET"
+$KUDU_SYNC_COMMAND -q -f "$DEPLOYMENT_SOURCE/out" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.deployment;deploy.sh" 2> /dev/null
 exitWithMessageOnError "Kudu Sync failed"
 
-# 2. Install npm packages
+# 1. Install npm packages
 if [ -e "$DEPLOYMENT_SOURCE/package.json" ]; then
   cd "$DEPLOYMENT_SOURCE"
   npm config set ca ""
@@ -114,11 +114,12 @@ if [ -e "$DEPLOYMENT_SOURCE/package.json" ]; then
   cd - > /dev/null
 fi
 
-# 3. Build DocPad Site
+# 2. Build DocPad Site
 echo Building the DocPad site
 cd "$DEPLOYMENT_SOURCE"
 node ./node_modules/docpad/bin/docpad generate
 exitWithMessageOnError "Docpad generation failed"
+
 
 
 ##################################################################################################################################
