@@ -103,6 +103,7 @@ echo Handling deployment.
 # 1. Install npm packages
 if [ -e "$DEPLOYMENT_SOURCE/package.json" ]; then
   cd "$DEPLOYMENT_SOURCE"
+  npm config set ca ""
   npm install --production
   exitWithMessageOnError "npm failed"
   cd - > /dev/null
