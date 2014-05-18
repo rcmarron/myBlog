@@ -98,29 +98,30 @@ selectNodeVersion () {
 # Deployment
 # ----------
 
-echo Handling deployment.
+echo Handling node.js deployment.
 
-# 3. KuduSync
-echo Kudu Sync from "$DEPLOYMENT_SOURCE\out" to "$DEPLOYMENT_TARGET"
-$KUDU_SYNC_COMMAND -q -f "$DEPLOYMENT_SOURCE\out" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.deployment;deploy.sh" 2> /dev/null
-exitWithMessageOnError "Kudu Sync failed"
+# 1. KuduSync
+if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
+  "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
+  exitWithMessageOnError "Kudu Sync failed"
+fi
 
-# 1. Install npm packages
-if [ -e "$DEPLOYMENT_SOURCE/package.json" ]; then
-  cd "$DEPLOYMENT_SOURCE"
-  npm config set ca ""
-  npm install --production
+# 2. Select node version
+selectNodeVersion
+
+# 3. Install npm packages
+if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
+  cd "$DEPLOYMENT_TARGET"
+  eval $NPM_CMD install --production
   exitWithMessageOnError "npm failed"
   cd - > /dev/null
 fi
 
-# 2. Build DocPad Site
+# 3. Build DocPad Site
 echo Building the DocPad site
-cd "$DEPLOYMENT_SOURCE"
-node ./node_modules/docpad/bin/docpad generate
-exitWithMessageOnError "Docpad generation failed"
-
-
+pushd %DEPLOYMENT_TARGET%
+call  %DEPLOYMENT_TARGET%\node_modules\.bin\docpad.cmd generate
+IF !ERRORLEVEL! NEQ 0 goto error
 
 ##################################################################################################################################
 
