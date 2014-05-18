@@ -101,8 +101,8 @@ selectNodeVersion () {
 echo Handling deployment.
 
 # 3. KuduSync
-echo Kudu Sync from "$DEPLOYMENT_SOURCE/out" to "$DEPLOYMENT_TARGET"
-$KUDU_SYNC_COMMAND -q -f "$DEPLOYMENT_SOURCE/out" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.deployment;deploy.sh" 2> /dev/null
+echo Kudu Sync from "$DEPLOYMENT_SOURCE\out" to "$DEPLOYMENT_TARGET"
+$KUDU_SYNC_COMMAND -q -f "$DEPLOYMENT_SOURCE\out" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.deployment;deploy.sh" 2> /dev/null
 exitWithMessageOnError "Kudu Sync failed"
 
 # 1. Install npm packages
