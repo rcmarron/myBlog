@@ -1,0 +1,7 @@
+---
+layout: default
+---
+
+
+
+<%- @partial('blogPost', {title:@document.title; content:@document.contentRenderedWithoutLayouts; cover:@document.cover; date:@document.date }) %>

@@ -1,0 +1,9 @@
+---
+layout: 'default'
+title: 'Home'
+---
+
+<% firstPost = @getCollection('posts').sortArray(date: -1)[0] %>
+
+
+<%- @partial('blogPost', {title:firstPost.title; content:firstPost.contentRenderedWithoutLayouts; cover:firstPost.cover; date:firstPost.date }) %>
